@@ -1,0 +1,41 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: rgb(139, 139, 190);
+}
+
+.cronometro {
+    text-align: center;
+}
+
+h1 {
+    font-size: 110px;
+    margin-bottom: 20px;
+    color: rgb(0, 0, 0);
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 18px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    background-color: rgb(133, 162, 173);
+    color: rgb(255, 255, 255);
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: rgb(189, 149, 189);
+}
+
+
+
+
+
+
+
