@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Relógio, Cronômetro e Temporizadores</title>
+  <title>Relógio, Cronômetro e Temporizador Regressivo</title>
   <style>
     /* Reset básico */
     * {
@@ -50,12 +50,21 @@
       margin-bottom: 10px;
     }
 
-    /* --- Cronômetro e Temporizadores --- */
-    #display, #timer, #countdownDisplay {
+    /* --- Cronômetro --- */
+    #display {
       font-size: 52px;
       font-weight: 700;
       color: #7a6a56;
       margin: 20px 0 25px;
+      letter-spacing: 4px;
+    }
+
+    /* --- Temporizador Regressivo --- */
+    #countdownDisplay {
+      font-size: 52px;
+      font-weight: 700;
+      color: #7a6a56;
+      margin: 20px 15px 25px;
       letter-spacing: 4px;
     }
 
@@ -129,17 +138,6 @@
       </div>
     </div>
 
-    <!-- Temporizador crescente -->
-    <div class="container">
-      <h1>Temporizador Crescente</h1>
-      <div id="timer">00:00</div>
-      <div class="buttons">
-        <button id="startTimerBtn">Iniciar</button>
-        <button id="pauseTimerBtn">Pausar</button>
-        <button id="resetTimerBtn">Reiniciar</button>
-      </div>
-    </div>
-
     <!-- Temporizador regressivo -->
     <div class="container">
       <h1>Temporizador Regressivo</h1>
@@ -208,42 +206,6 @@
       elapsedTime = 0;
       display.textContent = '00:00:00';
     });
-
-    // === TEMPORIZADOR CRESCENTE ===
-    let timerSeconds = 0;
-    let timerInterval = null;
-    const timerDisplay = document.getElementById('timer');
-    const startTimerBtn = document.getElementById('startTimerBtn');
-    const pauseTimerBtn = document.getElementById('pauseTimerBtn');
-    const resetTimerBtn = document.getElementById('resetTimerBtn');
-
-    function updateTimerDisplay() {
-      const min = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
-      const sec = String(timerSeconds % 60).padStart(2, '0');
-      timerDisplay.textContent = `${min}:${sec}`;
-    }
-
-    startTimerBtn.addEventListener('click', () => {
-      if (timerInterval) return; // já rodando
-      timerInterval = setInterval(() => {
-        timerSeconds++;
-        updateTimerDisplay();
-      }, 1000);
-    });
-
-    pauseTimerBtn.addEventListener('click', () => {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    });
-
-    resetTimerBtn.addEventListener('click', () => {
-      clearInterval(timerInterval);
-      timerInterval = null;
-      timerSeconds = 0;
-      updateTimerDisplay();
-    });
-
-    updateTimerDisplay();
 
     // === TEMPORIZADOR REGRESSIVO ===
     let countdownTime = 0;
