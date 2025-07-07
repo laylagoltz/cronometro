@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Relógio, Cronômetro e Temporizador</title>
+  <title>Relógio, Cronômetro e Temporizadores</title>
   <style>
     /* Reset básico */
     * {
@@ -50,8 +50,8 @@
       margin-bottom: 10px;
     }
 
-    /* --- Cronômetro e Temporizador --- */
-    #display, #timer {
+    /* --- Cronômetro e Temporizadores --- */
+    #display, #timer, #countdownDisplay {
       font-size: 52px;
       font-weight: 700;
       color: #7a6a56;
@@ -64,6 +64,7 @@
       display: flex;
       justify-content: center;
       gap: 15px;
+      flex-wrap: wrap;
     }
     button {
       background-color: #c9b59b;
@@ -82,6 +83,18 @@
     }
     button:active {
       background-color: #9e8c69;
+    }
+
+    input[type="number"] {
+      width: 80px;
+      padding: 8px;
+      font-size: 18px;
+      border: 2px solid #c9b59b;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+      color: #5a4d3f;
+      font-weight: 600;
     }
 
     /* Espaçamento entre blocos */
@@ -116,14 +129,26 @@
       </div>
     </div>
 
-    <!-- Temporizador -->
+    <!-- Temporizador crescente -->
     <div class="container">
-      <h1>Temporizador</h1>
+      <h1>Temporizador Crescente</h1>
       <div id="timer">00:00</div>
       <div class="buttons">
         <button id="startTimerBtn">Iniciar</button>
         <button id="pauseTimerBtn">Pausar</button>
         <button id="resetTimerBtn">Reiniciar</button>
+      </div>
+    </div>
+
+    <!-- Temporizador regressivo -->
+    <div class="container">
+      <h1>Temporizador Regressivo</h1>
+      <input type="number" id="countdownInput" min="1" max="3600" placeholder="Segundos" />
+      <div id="countdownDisplay">00:00</div>
+      <div class="buttons">
+        <button id="startCountdownBtn">Iniciar</button>
+        <button id="pauseCountdownBtn">Pausar</button>
+        <button id="resetCountdownBtn">Resetar</button>
       </div>
     </div>
 
@@ -184,7 +209,7 @@
       display.textContent = '00:00:00';
     });
 
-    // === TEMPORIZADOR ===
+    // === TEMPORIZADOR CRESCENTE ===
     let timerSeconds = 0;
     let timerInterval = null;
     const timerDisplay = document.getElementById('timer');
@@ -219,6 +244,64 @@
     });
 
     updateTimerDisplay();
+
+    // === TEMPORIZADOR REGRESSIVO ===
+    let countdownTime = 0;
+    let countdownCurrent = 0;
+    let countdownInterval = null;
+
+    const countdownInput = document.getElementById('countdownInput');
+    const countdownDisplay = document.getElementById('countdownDisplay');
+    const startCountdownBtn = document.getElementById('startCountdownBtn');
+    const pauseCountdownBtn = document.getElementById('pauseCountdownBtn');
+    const resetCountdownBtn = document.getElementById('resetCountdownBtn');
+
+    function updateCountdownDisplay() {
+      const min = String(Math.floor(countdownCurrent / 60)).padStart(2, '0');
+      const sec = String(countdownCurrent % 60).padStart(2, '0');
+      countdownDisplay.textContent = `${min}:${sec}`;
+    }
+
+    startCountdownBtn.addEventListener('click', () => {
+      if (countdownInterval) return; // já rodando
+      let val = parseInt(countdownInput.value);
+      if (isNaN(val) || val <= 0) {
+        alert('Digite um valor válido em segundos (maior que zero).');
+        return;
+      }
+      if (countdownCurrent === 0 || countdownCurrent === countdownTime) {
+        countdownTime = val;
+        countdownCurrent = val;
+        updateCountdownDisplay();
+      }
+      countdownInterval = setInterval(() => {
+        if (countdownCurrent > 0) {
+          countdownCurrent--;
+          updateCountdownDisplay();
+        } else {
+          clearInterval(countdownInterval);
+          countdownInterval = null;
+          alert('Tempo esgotado!');
+        }
+      }, 1000);
+    });
+
+    pauseCountdownBtn.addEventListener('click', () => {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+    });
+
+    resetCountdownBtn.addEventListener('click', () => {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      countdownCurrent = countdownTime;
+      updateCountdownDisplay();
+    });
+
+    // Inicializa display do temporizador regressivo com 00:00
+    countdownCurrent = 0;
+    updateCountdownDisplay();
+
   </script>
 </body>
 </html>
