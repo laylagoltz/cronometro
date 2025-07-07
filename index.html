@@ -1,20 +1,224 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronômetro</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Relógio, Cronômetro e Temporizador</title>
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f5f0; /* bege clarinho */
+      color: #5a4d3f;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 50px;
+      padding: 20px;
+    }
+    h1 {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #6b5b4b;
+    }
+
+    /* Container geral dos blocos */
+    .container {
+      background: #fff6e8; /* bege mais claro */
+      padding: 25px 40px;
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(107, 91, 75, 0.25);
+      text-align: center;
+      min-width: 280px;
+      max-width: 350px;
+      user-select: none;
+    }
+
+    /* --- Relógio --- */
+    .relogio {
+      font-size: 60px;
+      letter-spacing: 8px;
+      font-weight: 700;
+      color: #7a6a56;
+      margin-bottom: 10px;
+    }
+
+    /* --- Cronômetro e Temporizador --- */
+    #display, #timer {
+      font-size: 52px;
+      font-weight: 700;
+      color: #7a6a56;
+      margin: 20px 0 25px;
+      letter-spacing: 4px;
+    }
+
+    /* Botões estilos gerais */
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    button {
+      background-color: #c9b59b;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 22px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #4a3f2a;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(107, 91, 75, 0.3);
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #b3a17e;
+    }
+    button:active {
+      background-color: #9e8c69;
+    }
+
+    /* Espaçamento entre blocos */
+    .wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      width: 100%;
+      max-width: 1200px;
+    }
+  </style>
 </head>
 <body>
- <div class="cronometro">
-    <h1 id="display">00:00:00</h1>
-    <button id="startBtn">Iniciar</button>
-    <button id="pauseBtn">Pausar</button>
-    <button id="resetBtn">Resetar</button>
- </div>
 
- <script src="script.js"></script>
+  <div class="wrapper">
+
+    <!-- Relógio -->
+    <div class="container">
+      <h1>Relógio</h1>
+      <div class="relogio" id="clock">00:00:00</div>
+    </div>
+
+    <!-- Cronômetro -->
+    <div class="container">
+      <h1>Cronômetro</h1>
+      <div id="display">00:00:00</div>
+      <div class="buttons">
+        <button id="startBtn">Iniciar</button>
+        <button id="pauseBtn">Pausar</button>
+        <button id="resetBtn">Resetar</button>
+      </div>
+    </div>
+
+    <!-- Temporizador -->
+    <div class="container">
+      <h1>Temporizador</h1>
+      <div id="timer">00:00</div>
+      <div class="buttons">
+        <button id="startTimerBtn">Iniciar</button>
+        <button id="pauseTimerBtn">Pausar</button>
+        <button id="resetTimerBtn">Reiniciar</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // === RELÓGIO ===
+    const clockEl = document.getElementById('clock');
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      clockEl.textContent = `${h}:${m}:${s}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // === CRONÔMETRO ===
+    let startTime, elapsedTime = 0, cronInterval;
+    let cronPaused = true;
+
+    const display = document.getElementById('display');
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    function updateCron() {
+      elapsedTime = Date.now() - startTime;
+      const totalSeconds = Math.floor(elapsedTime / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      display.textContent =
+        `${hours.toString().padStart(2,'0')}:` +
+        `${minutes.toString().padStart(2,'0')}:` +
+        `${seconds.toString().padStart(2,'0')}`;
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (cronPaused) {
+        cronPaused = false;
+        startTime = Date.now() - elapsedTime;
+        cronInterval = setInterval(updateCron, 250);
+      }
+    });
+    pauseBtn.addEventListener('click', () => {
+      if (!cronPaused) {
+        cronPaused = true;
+        clearInterval(cronInterval);
+      }
+    });
+    resetBtn.addEventListener('click', () => {
+      cronPaused = true;
+      clearInterval(cronInterval);
+      elapsedTime = 0;
+      display.textContent = '00:00:00';
+    });
+
+    // === TEMPORIZADOR ===
+    let timerSeconds = 0;
+    let timerInterval = null;
+    const timerDisplay = document.getElementById('timer');
+    const startTimerBtn = document.getElementById('startTimerBtn');
+    const pauseTimerBtn = document.getElementById('pauseTimerBtn');
+    const resetTimerBtn = document.getElementById('resetTimerBtn');
+
+    function updateTimerDisplay() {
+      const min = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+      const sec = String(timerSeconds % 60).padStart(2, '0');
+      timerDisplay.textContent = `${min}:${sec}`;
+    }
+
+    startTimerBtn.addEventListener('click', () => {
+      if (timerInterval) return; // já rodando
+      timerInterval = setInterval(() => {
+        timerSeconds++;
+        updateTimerDisplay();
+      }, 1000);
+    });
+
+    pauseTimerBtn.addEventListener('click', () => {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    });
+
+    resetTimerBtn.addEventListener('click', () => {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerSeconds = 0;
+      updateTimerDisplay();
+    });
+
+    updateTimerDisplay();
+  </script>
 </body>
 </html>
